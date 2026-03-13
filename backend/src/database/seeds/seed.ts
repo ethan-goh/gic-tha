@@ -104,7 +104,6 @@ async function seed() {
   ]);
   await cafeEmployeeRepo.save(assignments);
   console.log(`Seeded ${assignments.length} cafe-employee assignments`);
-  console.log('Olivia Chan and Peter Wee left unassigned to test the unassigned employee case');
 
   await AppDataSource.destroy();
   console.log('Seed complete');

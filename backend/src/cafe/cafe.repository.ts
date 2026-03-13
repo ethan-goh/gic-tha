@@ -13,14 +13,21 @@ export class CafeRepository {
   async findAllWithEmployeeCount(location?: string): Promise<any[]> {
     const query = this.repo
       .createQueryBuilder('cafe')
-      .loadRelationCountAndMap('cafe.employees', 'cafe.cafeEmployees')
+      .leftJoin('cafe.cafeEmployees', 'ce')
+      .addSelect('COUNT(ce.employee_id)', 'employees')
+      .groupBy('cafe.id')
       .orderBy('employees', 'DESC');
 
     if (location) {
       query.where('LOWER(cafe.location) = LOWER(:location)', { location });
     }
 
-    return query.getMany();
+    return query.getRawAndEntities().then(({ entities, raw }) =>
+      entities.map((cafe, i) => ({
+        ...cafe,
+        employees: parseInt(raw[i]?.employees ?? '0', 10),
+      })),
+    );
   }
 
   async findById(id: string): Promise<Cafe | null> {
