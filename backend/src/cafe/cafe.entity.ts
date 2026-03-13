@@ -12,8 +12,8 @@ export class Cafe {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ nullable: true })
-  logo: string;
+  @Column({ type: 'varchar', nullable: true })
+  logo: string | null;
 
   @Column({ length: 255 })
   location: string;
