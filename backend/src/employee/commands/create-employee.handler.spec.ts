@@ -1,15 +1,12 @@
 import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateEmployeeHandler, CreateEmployeeCommand } from './create-employee.handler';
 import { EmployeeRepository } from '../employee.repository';
-import { CafeEmployee } from '../../cafe-employee/cafe-employee.entity';
 import { CreateEmployeeDto } from '../dto/create-employee.dto';
 import { Employee, Gender } from '../employee.entity';
 
 describe('CreateEmployeeHandler', () => {
   let handler: CreateEmployeeHandler;
   let employeeRepository: jest.Mocked<EmployeeRepository>;
-  let cafeEmployeeRepo: { create: jest.Mock; save: jest.Mock };
 
   const dto: CreateEmployeeDto = {
     name: 'Alice Tan',
@@ -29,18 +26,12 @@ describe('CreateEmployeeHandler', () => {
   };
 
   beforeEach(async () => {
-    cafeEmployeeRepo = { create: jest.fn(), save: jest.fn() };
-
     const module = await Test.createTestingModule({
       providers: [
         CreateEmployeeHandler,
         {
           provide: EmployeeRepository,
-          useValue: { create: jest.fn() },
-        },
-        {
-          provide: getRepositoryToken(CafeEmployee),
-          useValue: cafeEmployeeRepo,
+          useValue: { create: jest.fn(), assignToCafe: jest.fn() },
         },
       ],
     }).compile();
@@ -55,20 +46,18 @@ describe('CreateEmployeeHandler', () => {
     const result = await handler.execute(new CreateEmployeeCommand(dto));
 
     expect(employeeRepository.create).toHaveBeenCalledWith({ name: dto.name, email_address: dto.email_address, phone_number: dto.phone_number, gender: dto.gender });
-    expect(cafeEmployeeRepo.save).not.toHaveBeenCalled();
+    expect(employeeRepository.assignToCafe).not.toHaveBeenCalled();
     expect(result).toEqual(mockEmployee);
   });
 
   it('should create an employee and assign to cafe', async () => {
     const dtoWithCafe: CreateEmployeeDto = { ...dto, cafeId: 'cafe-uuid-1' };
-    const assignment = { cafeId: dtoWithCafe.cafeId, employeeId: mockEmployee.id };
     employeeRepository.create.mockResolvedValue(mockEmployee);
-    cafeEmployeeRepo.create.mockReturnValue(assignment);
-    cafeEmployeeRepo.save.mockResolvedValue(assignment);
+    employeeRepository.assignToCafe.mockResolvedValue(undefined);
 
     const result = await handler.execute(new CreateEmployeeCommand(dtoWithCafe));
 
-    expect(cafeEmployeeRepo.save).toHaveBeenCalled();
+    expect(employeeRepository.assignToCafe).toHaveBeenCalledWith(mockEmployee.id, 'cafe-uuid-1');
     expect(result).toEqual(mockEmployee);
   });
 

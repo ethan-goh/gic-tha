@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Employee } from './employee.entity';
+import { CafeEmployee } from '../cafe-employee/cafe-employee.entity';
 
 @Injectable()
 export class EmployeeRepository {
   constructor(
     @InjectRepository(Employee)
     private readonly repo: Repository<Employee>,
+    @InjectRepository(CafeEmployee)
+    private readonly cafeEmployeeRepo: Repository<CafeEmployee>,
   ) {}
 
   async findAllWithCafeAndDaysWorked(cafeId?: string): Promise<any[]> {
@@ -57,5 +60,18 @@ export class EmployeeRepository {
 
   async delete(id: string): Promise<void> {
     await this.repo.delete(id);
+  }
+
+  async assignToCafe(employeeId: string, cafeId: string): Promise<void> {
+    const assignment = this.cafeEmployeeRepo.create({
+      cafeId,
+      employeeId,
+      start_date: new Date(),
+    });
+    await this.cafeEmployeeRepo.save(assignment);
+  }
+
+  async removeFromCafe(employeeId: string): Promise<void> {
+    await this.cafeEmployeeRepo.delete({ employeeId });
   }
 }
