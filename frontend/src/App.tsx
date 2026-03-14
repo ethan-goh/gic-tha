@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import NavBar from './components/NavBar'
 
 function CafesPage() {
   return <div className="page-container"><h1 className="page-title">Cafes</h1></div>
@@ -18,14 +19,17 @@ function EmployeeFormPage() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/cafes" replace />} />
-      <Route path="/cafes" element={<CafesPage />} />
-      <Route path="/cafes/new" element={<CafeFormPage />} />
-      <Route path="/cafes/:id/edit" element={<CafeFormPage />} />
-      <Route path="/employees" element={<EmployeesPage />} />
-      <Route path="/employees/new" element={<EmployeeFormPage />} />
-      <Route path="/employees/:id/edit" element={<EmployeeFormPage />} />
-    </Routes>
+    <>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Navigate to="/cafes" replace />} />
+        <Route path="/cafes" element={<CafesPage />} />
+        <Route path="/cafes/new" element={<CafeFormPage />} />
+        <Route path="/cafes/:id/edit" element={<CafeFormPage />} />
+        <Route path="/employees" element={<EmployeesPage />} />
+        <Route path="/employees/new" element={<EmployeeFormPage />} />
+        <Route path="/employees/:id/edit" element={<EmployeeFormPage />} />
+      </Routes>
+    </>
   )
 }
