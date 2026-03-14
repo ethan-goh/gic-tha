@@ -6,6 +6,11 @@ describe('GetCafesHandler', () => {
   let handler: GetCafesHandler;
   let cafeRepository: jest.Mocked<CafeRepository>;
 
+  const mockCafes = [
+    { id: 'uuid-1', name: 'Cafe A', location: 'Orchard Road', employees: 3 },
+    { id: 'uuid-2', name: 'Cafe B', location: 'Bugis', employees: 1 },
+  ];
+
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
@@ -22,10 +27,6 @@ describe('GetCafesHandler', () => {
   });
 
   it('should return all cafes when no location is provided', async () => {
-    const mockCafes = [
-      { id: '1', name: 'Cafe A', employees: 3 },
-      { id: '2', name: 'Cafe B', employees: 1 },
-    ];
     cafeRepository.findAllWithEmployeeCount.mockResolvedValue(mockCafes);
 
     const result = await handler.execute(new GetCafesQuery());
@@ -35,13 +36,13 @@ describe('GetCafesHandler', () => {
   });
 
   it('should pass location to repository when location is provided', async () => {
-    const mockCafes = [{ id: '1', name: 'Cafe A', location: 'Orchard Road', employees: 2 }];
-    cafeRepository.findAllWithEmployeeCount.mockResolvedValue(mockCafes);
+    const filtered = [mockCafes[0]];
+    cafeRepository.findAllWithEmployeeCount.mockResolvedValue(filtered);
 
     const result = await handler.execute(new GetCafesQuery('Orchard Road'));
 
     expect(cafeRepository.findAllWithEmployeeCount).toHaveBeenCalledWith('Orchard Road');
-    expect(result).toEqual(mockCafes);
+    expect(result).toEqual(filtered);
   });
 
   it('should return empty array when no cafes match the location', async () => {

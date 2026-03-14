@@ -9,6 +9,8 @@ describe('UpdateCafeHandler', () => {
   let handler: UpdateCafeHandler;
   let cafeRepository: jest.Mocked<CafeRepository>;
 
+  const dto: UpdateCafeDto = { name: 'New Name' };
+
   const mockCafe: Cafe = {
     id: 'uuid-1',
     name: 'Cafe A',
@@ -34,7 +36,6 @@ describe('UpdateCafeHandler', () => {
   });
 
   it('should update and return the cafe', async () => {
-    const dto: UpdateCafeDto = { name: 'New Name' };
     const updated: Cafe = { ...mockCafe, ...dto };
     cafeRepository.update.mockResolvedValue(updated);
 
@@ -48,7 +49,7 @@ describe('UpdateCafeHandler', () => {
     cafeRepository.update.mockResolvedValue(null);
 
     await expect(
-      handler.execute(new UpdateCafeCommand('bad-id', {})),
+      handler.execute(new UpdateCafeCommand('bad-id', dto)),
     ).rejects.toThrow(ResourceNotFoundException);
   });
 
@@ -56,7 +57,7 @@ describe('UpdateCafeHandler', () => {
     cafeRepository.update.mockRejectedValue(new Error('DB failed'));
 
     await expect(
-      handler.execute(new UpdateCafeCommand('uuid-1', {})),
+      handler.execute(new UpdateCafeCommand('uuid-1', dto)),
     ).rejects.toThrow('DB failed');
   });
 });

@@ -13,6 +13,9 @@ describe('CafeController', () => {
   let queryBus: jest.Mocked<QueryBus>;
   let commandBus: jest.Mocked<CommandBus>;
 
+  const createDto: CreateCafeDto = { name: 'Cafe A', description: 'Nice place', location: 'Orchard' };
+  const updateDto: UpdateCafeDto = { name: 'New Name' };
+
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       controllers: [CafeController],
@@ -38,15 +41,13 @@ describe('CafeController', () => {
   });
 
   it('should dispatch CreateCafeCommand', () => {
-    const dto: CreateCafeDto = { name: 'Cafe A', description: 'Nice place', location: 'Orchard' };
-    controller.createCafe(dto);
-    expect(commandBus.execute).toHaveBeenCalledWith(new CreateCafeCommand(dto));
+    controller.createCafe(createDto);
+    expect(commandBus.execute).toHaveBeenCalledWith(new CreateCafeCommand(createDto));
   });
 
   it('should dispatch UpdateCafeCommand', () => {
-    const dto: UpdateCafeDto = { name: 'New Name' };
-    controller.updateCafe('uuid-1', dto);
-    expect(commandBus.execute).toHaveBeenCalledWith(new UpdateCafeCommand('uuid-1', dto));
+    controller.updateCafe('uuid-1', updateDto);
+    expect(commandBus.execute).toHaveBeenCalledWith(new UpdateCafeCommand('uuid-1', updateDto));
   });
 
   it('should dispatch DeleteCafeCommand', () => {

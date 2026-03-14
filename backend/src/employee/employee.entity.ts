@@ -24,7 +24,7 @@ export class Employee {
   gender: Gender;
 
   @OneToOne(() => CafeEmployee, (cafeEmployee) => cafeEmployee.employee)
-  cafeEmployee: CafeEmployee;
+  cafeEmployee: CafeEmployee | null;
 
   @BeforeInsert()
   generateId() {
