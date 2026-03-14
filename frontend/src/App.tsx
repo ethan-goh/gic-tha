@@ -1,9 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import NavBar from './components/NavBar'
-
-function CafesPage() {
-  return <div className="page-container"><h1 className="page-title">Cafes</h1></div>
-}
+import CafesPage from './pages/CafesPage'
 
 function EmployeesPage() {
   return <div className="page-container"><h1 className="page-title">Employees</h1></div>
