@@ -6,6 +6,9 @@ import { CafeEmployee } from '../cafe-employee/cafe-employee.entity';
 import { EmployeeRepository } from './employee.repository';
 import { EmployeeController } from './employee.controller';
 import { GetEmployeesHandler } from './queries/get-employees.handler';
+import { CreateEmployeeHandler } from './commands/create-employee.handler';
+import { UpdateEmployeeHandler } from './commands/update-employee.handler';
+import { DeleteEmployeeHandler } from './commands/delete-employee.handler';
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { GetEmployeesHandler } from './queries/get-employees.handler';
   providers: [
     EmployeeRepository,
     GetEmployeesHandler,
+    CreateEmployeeHandler,
+    UpdateEmployeeHandler,
+    DeleteEmployeeHandler,
   ],
 })
 export class EmployeeModule {}
