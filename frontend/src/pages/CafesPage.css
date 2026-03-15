@@ -1,3 +1,9 @@
+.logo-cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
 .logo-placeholder {
   width: 36px;
   height: 36px;
@@ -32,17 +38,4 @@
 
 .employee-count-link:hover {
   background: #dbeafe;
-}
-
-.actions-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 100%;
-}
-
-.loading-state {
-  display: flex;
-  justify-content: center;
-  padding: 80px 0;
 }

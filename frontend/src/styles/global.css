@@ -90,3 +90,17 @@ body {
   align-items: center;
   gap: 12px;
 }
+
+/* Shared table cell styles */
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}

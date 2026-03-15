@@ -1,43 +1,28 @@
 import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Input, Modal, message, Spin } from 'antd'
 import {
   PlusOutlined,
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
-  CoffeeOutlined,
 } from '@ant-design/icons'
 import { AgGridReact } from 'ag-grid-react'
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
-import { useCafes, useDeleteCafe } from '../api/cafes'
-import type { Cafe } from '../types'
-import './CafesPage.css'
+import { useEmployees, useDeleteEmployee } from '../api/employees'
+import type { Employee } from '../types'
+import './EmployeesPage.css'
 
 ModuleRegistry.registerModules([AllCommunityModule])
-
-function LogoCell({ value }: ICellRendererParams<Cafe, string | null>) {
-  return (
-    <div className="logo-cell">
-      {value ? (
-        <img src={value} alt="logo" className="logo-img" />
-      ) : (
-        <div className="logo-placeholder">
-          <CoffeeOutlined />
-        </div>
-      )}
-    </div>
-  )
-}
 
 function ActionsCell({
   data,
   onEdit,
   onDelete,
-}: ICellRendererParams<Cafe> & {
+}: ICellRendererParams<Employee> & {
   onEdit: (id: string) => void
   onDelete: (id: string, name: string) => void
 }) {
@@ -63,28 +48,37 @@ function ActionsCell({
   )
 }
 
-export default function CafesPage() {
+export default function EmployeesPage() {
   const navigate = useNavigate()
-  const [locationFilter, setLocationFilter] = useState('')
+  const [searchParams] = useSearchParams()
+  const initialCafe = searchParams.get('cafe') ?? ''
+
+  const [nameFilter, setNameFilter] = useState('')
   const [messageApi, contextHolder] = message.useMessage()
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [debouncedLocation, setDebouncedLocation] = useState('')
+  const [debouncedName, setDebouncedName] = useState('')
 
-  const { data: cafes = [], isLoading } = useCafes(debouncedLocation || undefined)
-  const deleteMutation = useDeleteCafe()
+  const { data: employees = [], isLoading } = useEmployees(initialCafe || undefined)
+  const deleteMutation = useDeleteEmployee()
 
-  const handleLocationChange = (value: string) => {
-    setLocationFilter(value)
+  const handleNameChange = (value: string) => {
+    setNameFilter(value)
     if (searchTimeout.current) clearTimeout(searchTimeout.current)
-    searchTimeout.current = setTimeout(() => setDebouncedLocation(value), 400)
+    searchTimeout.current = setTimeout(() => setDebouncedName(value), 400)
   }
 
-  const handleEdit = (id: string) => navigate(`/cafes/${id}/edit`)
+  const filtered = debouncedName
+    ? employees.filter((e) =>
+        e.name.toLowerCase().includes(debouncedName.toLowerCase()),
+      )
+    : employees
+
+  const handleEdit = (id: string) => navigate(`/employees/${id}/edit`)
 
   const handleDelete = (id: string, name: string) => {
     Modal.confirm({
-      title: 'Delete Café',
-      content: `Are you sure you want to delete "${name}"? This will also remove all employees under this café.`,
+      title: 'Delete Employee',
+      content: `Are you sure you want to delete "${name}"?`,
       okText: 'Delete',
       okButtonProps: { danger: true },
       cancelText: 'Cancel',
@@ -95,37 +89,27 @@ export default function CafesPage() {
     })
   }
 
-  const colDefs: ColDef<Cafe>[] = [
+  const colDefs: ColDef<Employee>[] = [
+    { field: 'id', headerName: 'Employee ID', width: 140 },
+    { field: 'name', headerName: 'Name', flex: 1, minWidth: 140 },
+    { field: 'email_address', headerName: 'Email', flex: 1, minWidth: 180 },
+    { field: 'phone_number', headerName: 'Phone', width: 130 },
+    { field: 'gender', headerName: 'Gender', width: 100 },
+    { field: 'cafe', headerName: 'Café', flex: 1, minWidth: 140 },
     {
-      field: 'logo',
-      headerName: 'Logo',
-      width: 80,
-      cellRenderer: LogoCell,
-      sortable: false,
-      filter: false,
-    },
-    { field: 'name', headerName: 'Name', flex: 1, minWidth: 120 },
-    { field: 'description', headerName: 'Description', flex: 2, minWidth: 180 },
-    {
-      field: 'employees',
-      headerName: 'Employees',
-      width: 120,
-      cellRenderer: ({ data, value }: ICellRendererParams<Cafe, number>) => (
-        <button
-          className="employee-count-link"
-          onClick={() => data && navigate(`/employees?cafe=${data.id}`)}
-        >
-          {value}
-        </button>
+      field: 'days_worked',
+      headerName: 'Days Worked',
+      width: 130,
+      cellRenderer: ({ value }: ICellRendererParams<Employee, number>) => (
+        <span className="days-worked-badge">{value ?? 0}</span>
       ),
     },
-    { field: 'location', headerName: 'Location', flex: 1, minWidth: 120 },
     {
       headerName: 'Actions',
       width: 180,
       sortable: false,
       filter: false,
-      cellRenderer: (params: ICellRendererParams<Cafe>) => (
+      cellRenderer: (params: ICellRendererParams<Employee>) => (
         <ActionsCell {...params} onEdit={handleEdit} onDelete={handleDelete} />
       ),
     },
@@ -136,28 +120,35 @@ export default function CafesPage() {
       {contextHolder}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Cafes</h1>
-          <p className="page-subtitle">Manage your café locations</p>
+          <h1 className="page-title">Employees</h1>
+          <p className="page-subtitle">
+            {initialCafe ? 'Showing employees for selected café' : 'Manage your employees'}
+          </p>
         </div>
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => navigate('/cafes/new')}
+          onClick={() => navigate('/employees/new')}
         >
-          Add New Café
+          Add New Employee
         </Button>
       </div>
 
       <div className="table-toolbar">
         <div className="toolbar-left">
           <Input
-            placeholder="Filter by location"
+            placeholder="Filter by name"
             prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
-            value={locationFilter}
-            onChange={(e) => handleLocationChange(e.target.value)}
+            value={nameFilter}
+            onChange={(e) => handleNameChange(e.target.value)}
             allowClear
             style={{ width: 240 }}
           />
+          {initialCafe && (
+            <Button onClick={() => navigate('/employees')}>
+              Clear café filter
+            </Button>
+          )}
         </div>
       </div>
 
@@ -170,7 +161,7 @@ export default function CafesPage() {
           <div className="ag-theme-quartz" style={{ width: '100%' }}>
             <AgGridReact
               theme="legacy"
-              rowData={cafes}
+              rowData={filtered}
               columnDefs={colDefs}
               domLayout="autoHeight"
               rowHeight={56}
