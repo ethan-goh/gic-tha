@@ -15,6 +15,7 @@ export interface Employee {
   gender: 'Male' | 'Female';
   days_worked: number;
   cafe: string;
+  cafeId: string | null;
 }
 
 export interface CreateCafeDto {

@@ -20,6 +20,7 @@ export class EmployeeRepository {
       .leftJoin('ce.cafe', 'cafe')
       .addSelect('ce.start_date', 'start_date')
       .addSelect('cafe.name', 'cafe_name')
+      .addSelect('ce.cafe_id', 'cafe_id')
       .addSelect(
         `COALESCE(CURRENT_DATE - ce.start_date::date, 0)`,
         'days_worked',
@@ -40,6 +41,7 @@ export class EmployeeRepository {
         gender: employee.gender,
         days_worked: parseInt(raw[i]?.days_worked ?? '0', 10),
         cafe: raw[i]?.cafe_name ?? '',
+        cafeId: raw[i]?.cafe_id ?? null,
       })),
     );
   }

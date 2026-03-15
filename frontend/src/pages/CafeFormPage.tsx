@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useBlocker } from 'react-router-dom'
 import { Button, Form, Input, Modal, Spin, message } from 'antd'
 import { useCafe, useCreateCafe, useUpdateCafe } from '../api/cafes'
-import './CafeFormPage.css'
 
 interface FormValues {
   name: string
@@ -38,7 +37,7 @@ export default function CafeFormPage() {
   }, [existing, form])
 
   // Warn on unsaved changes
-  const blocker = useBlocker(isDirty && !isSaving)
+  const blocker = useBlocker(() => isDirty && !isSaving)
 
   useEffect(() => {
     if (blocker.state === 'blocked') {
