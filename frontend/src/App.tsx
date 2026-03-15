@@ -2,10 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import NavBar from './components/NavBar'
 import CafesPage from './pages/CafesPage'
 import EmployeesPage from './pages/EmployeesPage'
-
-function CafeFormPage() {
-  return <div className="page-container"><h1 className="page-title">Add / Edit Cafe</h1></div>
-}
+import CafeFormPage from './pages/CafeFormPage'
 
 function EmployeeFormPage() {
   return <div className="page-container"><h1 className="page-title">Add / Edit Employee</h1></div>
