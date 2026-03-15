@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useBlocker } from 'react-router-dom'
-import { Button, Form, Input, Modal, Spin, message } from 'antd'
-import { useCafe, useCreateCafe, useUpdateCafe } from '../api/cafes'
+import { Button, Form, Input, Modal, message } from 'antd'
+import { useQueryClient } from '@tanstack/react-query'
+import { useCreateCafe, useUpdateCafe } from '../api/cafes'
+import type { Cafe } from '../types'
 
 interface FormValues {
   name: string
@@ -18,7 +20,11 @@ export default function CafeFormPage() {
   const [isDirty, setIsDirty] = useState(false)
   const [messageApi, contextHolder] = message.useMessage()
 
-  const { data: existing, isLoading } = useCafe(id ?? '')
+  const qc = useQueryClient()
+  const existing = isEdit
+    ? qc.getQueryData<Cafe[]>(['cafes', ''])?.find((c) => c.id === id)
+    : undefined
+
   const createMutation = useCreateCafe()
   const updateMutation = useUpdateCafe()
 
@@ -71,14 +77,6 @@ export default function CafeFormPage() {
 
     setIsDirty(false)
     setTimeout(() => navigate('/cafes'), 800)
-  }
-
-  if (isEdit && isLoading) {
-    return (
-      <div className="loading-state">
-        <Spin size="large" />
-      </div>
-    )
   }
 
   return (
