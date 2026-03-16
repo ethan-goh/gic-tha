@@ -5,13 +5,14 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryColumn,
+  Unique,
 } from 'typeorm';
 import { Cafe } from '../cafe/cafe.entity';
 import { Employee } from '../employee/employee.entity';
 
 @Entity('cafe_employees')
+@Unique(['employeeId']) // one employee can only be assigned to one café at a time
 export class CafeEmployee {
-  // composite PK — enforces one employee per cafe at the DB level
   @PrimaryColumn({ name: 'cafe_id' })
   cafeId: string;
 

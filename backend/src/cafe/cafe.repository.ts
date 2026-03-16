@@ -22,6 +22,7 @@ export class CafeRepository {
       query.where('LOWER(cafe.location) = LOWER(:location)', { location });
     }
 
+    // getRawAndEntities gives typed entities + raw SQL results (for computed fields like COUNT)
     return query.getRawAndEntities().then(({ entities, raw }) =>
       entities.map((cafe, i) => ({
         ...cafe,

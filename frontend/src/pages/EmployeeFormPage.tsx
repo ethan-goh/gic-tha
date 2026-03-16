@@ -23,6 +23,7 @@ export default function EmployeeFormPage() {
   const [messageApi, contextHolder] = message.useMessage()
 
   const qc = useQueryClient()
+  // read from cache instead of fetching
   const existing = isEdit
     ? qc.getQueryData<Employee[]>(['employees', ''])?.find((e) => e.id === id)
     : undefined
@@ -69,16 +70,25 @@ export default function EmployeeFormPage() {
       cafeId: values.cafeId ?? undefined,
     }
 
-    if (isEdit) {
-      await updateMutation.mutateAsync({ id: id!, dto })
-      messageApi.success('Employee updated successfully.')
-    } else {
-      await createMutation.mutateAsync(dto)
-      messageApi.success('Employee created successfully.')
+    try {
+      if (isEdit) {
+        await updateMutation.mutateAsync({ id: id!, dto })
+        messageApi.success('Employee updated successfully.')
+      } else {
+        await createMutation.mutateAsync(dto)
+        messageApi.success('Employee created successfully.')
+      }
+      setIsDirty(false)
+      setTimeout(() => navigate('/employees'), 800)
+    } catch (err: any) {
+      const status = err?.response?.status
+      const msg: string = err?.response?.data?.message ?? ''
+      if (status === 409 || msg.toLowerCase().includes('email')) {
+        messageApi.error('An employee with this email already exists.')
+      } else {
+        messageApi.error('Something went wrong. Please try again.')
+      }
     }
-
-    setIsDirty(false)
-    setTimeout(() => navigate('/employees'), 800)
   }
 
   if (isEdit && !existing && cafesLoading) {

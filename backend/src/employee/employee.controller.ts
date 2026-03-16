@@ -9,6 +9,7 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Controller('employees')
 export class EmployeeController {
+  // mediator pattern — routes to the correct handler
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,

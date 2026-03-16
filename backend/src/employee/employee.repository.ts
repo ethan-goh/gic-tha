@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Employee } from './employee.entity';
@@ -51,13 +51,27 @@ export class EmployeeRepository {
   }
 
   async create(data: Partial<Employee>): Promise<Employee> {
-    const employee = this.repo.create(data);
-    return this.repo.save(employee);
+    try {
+      const employee = this.repo.create(data);
+      return await this.repo.save(employee);
+    } catch (err) {
+      if ((err as any).code === '23505') { // postgres unique constraint violation
+        throw new ConflictException('An employee with this email already exists');
+      }
+      throw err;
+    }
   }
 
   async update(id: string, data: Partial<Employee>): Promise<Employee | null> {
-    await this.repo.update(id, data);
-    return this.findById(id);
+    try {
+      await this.repo.update(id, data);
+      return this.findById(id);
+    } catch (err) {
+      if ((err as any).code === '23505') { // postgres unique constraint violation
+        throw new ConflictException('An employee with this email already exists');
+      }
+      throw err;
+    }
   }
 
   async delete(id: string): Promise<void> {

@@ -9,6 +9,7 @@ import { UpdateCafeDto } from './dto/update-cafe.dto';
 
 @Controller('cafes')
 export class CafeController {
+  // mediator pattern — routes to the correct handler
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,

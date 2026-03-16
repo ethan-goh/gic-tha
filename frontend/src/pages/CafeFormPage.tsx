@@ -21,6 +21,7 @@ export default function CafeFormPage() {
   const [messageApi, contextHolder] = message.useMessage()
 
   const qc = useQueryClient()
+  // read from cache instead of fetching
   const existing = isEdit
     ? qc.getQueryData<Cafe[]>(['cafes', ''])?.find((c) => c.id === id)
     : undefined
