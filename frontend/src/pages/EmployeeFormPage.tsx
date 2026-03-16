@@ -169,9 +169,9 @@ export default function EmployeeFormPage() {
             </Radio.Group>
           </Form.Item>
 
-          <Form.Item label="Assigned Café" name="cafeId">
+          <Form.Item label="Assigned Cafe" name="cafeId">
             <Select
-              placeholder="Select a café (optional)"
+              placeholder="Select a cafe (optional)"
               allowClear
               loading={cafesLoading}
               options={cafes.map((c) => ({ value: c.id, label: c.name }))}

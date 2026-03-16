@@ -98,7 +98,7 @@ export default function CafesPage() {
 
   const handleDelete = (id: string, name: string) => {
     Modal.confirm({
-      title: 'Delete Café',
+      title: 'Delete Cafe',
       content: `Are you sure you want to delete "${name}"? This will also remove all employees under this café.`,
       okText: 'Delete',
       okButtonProps: { danger: true },
@@ -159,7 +159,7 @@ export default function CafesPage() {
           icon={<PlusOutlined />}
           onClick={() => navigate('/cafes/new')}
         >
-          Add New Café
+          Add New Cafe
         </Button>
       </div>
 

@@ -70,10 +70,10 @@ export default function CafeFormPage() {
 
     if (isEdit) {
       await updateMutation.mutateAsync({ id: id!, dto })
-      messageApi.success('Café updated successfully.')
+      messageApi.success('Cafe updated successfully.')
     } else {
       await createMutation.mutateAsync(dto)
-      messageApi.success('Café created successfully.')
+      messageApi.success('Cafe created successfully.')
     }
 
     setIsDirty(false)
@@ -85,7 +85,7 @@ export default function CafeFormPage() {
       {contextHolder}
       <div className="page-header">
         <div>
-          <h1 className="page-title">{isEdit ? 'Edit Café' : 'Add New Café'}</h1>
+          <h1 className="page-title">{isEdit ? 'Edit Cafe' : 'Add New Cafe'}</h1>
           <p className="page-subtitle">
             {isEdit ? 'Update the details for this café' : 'Fill in the details for your new café'}
           </p>
@@ -149,7 +149,7 @@ export default function CafeFormPage() {
               Cancel
             </Button>
             <Button type="primary" htmlType="submit" loading={isSaving}>
-              {isEdit ? 'Save Changes' : 'Create Café'}
+              {isEdit ? 'Save Changes' : 'Create Cafe'}
             </Button>
           </div>
         </Form>

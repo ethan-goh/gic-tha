@@ -5,7 +5,10 @@ export default function NavBar() {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        <span className="navbar-brand">Café Manager</span>
+        <span className="navbar-brand">
+          <img src="/favicon.svg" alt="logo" style={{ width: 20, height: 20, marginRight: 8, verticalAlign: 'middle' }} />
+          Cafe Manager
+        </span>
         <div className="navbar-links">
           <NavLink
             to="/cafes"

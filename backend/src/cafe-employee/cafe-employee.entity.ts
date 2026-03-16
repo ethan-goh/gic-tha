@@ -11,7 +11,7 @@ import { Cafe } from '../cafe/cafe.entity';
 import { Employee } from '../employee/employee.entity';
 
 @Entity('cafe_employees')
-@Unique(['employeeId']) // one employee can only be assigned to one café at a time
+@Unique(['employeeId']) // one employee can only be assigned to one cafe at a time
 export class CafeEmployee {
   @PrimaryColumn({ name: 'cafe_id' })
   cafeId: string;

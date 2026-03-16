@@ -1,4 +1,4 @@
-# Café Employee Management System
+# Cafe Employee Management System
 
 ## Live Demo
 

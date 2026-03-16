@@ -95,7 +95,7 @@ export default function EmployeesPage() {
     { field: 'email_address', headerName: 'Email', flex: 1, minWidth: 180 },
     { field: 'phone_number', headerName: 'Phone', width: 130 },
     { field: 'gender', headerName: 'Gender', width: 100 },
-    { field: 'cafe', headerName: 'Café', flex: 1, minWidth: 140 },
+    { field: 'cafe', headerName: 'Cafe', flex: 1, minWidth: 140 },
     {
       field: 'days_worked',
       headerName: 'Days Worked',
@@ -122,7 +122,7 @@ export default function EmployeesPage() {
         <div>
           <h1 className="page-title">Employees</h1>
           <p className="page-subtitle">
-            {initialCafe ? 'Showing employees for selected café' : 'Manage your employees'}
+            {initialCafe ? 'Showing employees for selected cafe' : 'Manage your employees'}
           </p>
         </div>
         <Button
@@ -146,7 +146,7 @@ export default function EmployeesPage() {
           />
           {initialCafe && (
             <Button onClick={() => navigate('/employees')}>
-              Clear café filter
+              Clear cafe filter
             </Button>
           )}
         </div>
