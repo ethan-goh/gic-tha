@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-> URL will be added after deployment
+https://empowering-contentment-production-f55c.up.railway.app/
 
 ## Tech Stack
 
