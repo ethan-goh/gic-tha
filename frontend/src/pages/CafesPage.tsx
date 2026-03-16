@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input, Modal, message, Spin } from 'antd'
+import { Button, Input, Modal, message, Spin, Select } from 'antd'
 import {
   PlusOutlined,
   SearchOutlined,
@@ -65,18 +65,33 @@ function ActionsCell({
 
 export default function CafesPage() {
   const navigate = useNavigate()
-  const [locationFilter, setLocationFilter] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
+  const [locationFilter, setLocationFilter] = useState<string[]>([])
   const [messageApi, contextHolder] = message.useMessage()
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [debouncedLocation, setDebouncedLocation] = useState('')
+  const [debouncedName, setDebouncedName] = useState('')
 
-  const { data: cafes = [], isLoading } = useCafes(debouncedLocation || undefined)
+  const { data: cafes = [], isLoading } = useCafes()
   const deleteMutation = useDeleteCafe()
 
-  const handleLocationChange = (value: string) => {
-    setLocationFilter(value)
+  const locationOptions = [...new Set(cafes.map((c) => c.location))].map((loc) => ({
+    label: loc,
+    value: loc,
+  }))
+
+  const filtered = cafes.filter((c) => {
+    const matchesName = debouncedName
+      ? c.name.toLowerCase().includes(debouncedName.toLowerCase())
+      : true
+    const matchesLocation =
+      locationFilter.length > 0 ? locationFilter.includes(c.location) : true
+    return matchesName && matchesLocation
+  })
+
+  const handleNameChange = (value: string) => {
+    setNameFilter(value)
     if (searchTimeout.current) clearTimeout(searchTimeout.current)
-    searchTimeout.current = setTimeout(() => setDebouncedLocation(value), 400)
+    searchTimeout.current = setTimeout(() => setDebouncedName(value), 400)
   }
 
   const handleEdit = (id: string) => navigate(`/cafes/${id}/edit`)
@@ -151,12 +166,21 @@ export default function CafesPage() {
       <div className="table-toolbar">
         <div className="toolbar-left">
           <Input
-            placeholder="Filter by location"
+            placeholder="Search by name"
             prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
-            value={locationFilter}
-            onChange={(e) => handleLocationChange(e.target.value)}
+            value={nameFilter}
+            onChange={(e) => handleNameChange(e.target.value)}
             allowClear
             style={{ width: 240 }}
+          />
+          <Select
+            mode="multiple"
+            placeholder="Filter by location"
+            value={locationFilter}
+            onChange={setLocationFilter}
+            options={locationOptions}
+            allowClear
+            style={{ minWidth: 200 }}
           />
         </div>
       </div>
@@ -170,7 +194,7 @@ export default function CafesPage() {
           <div className="ag-theme-quartz" style={{ width: '100%' }}>
             <AgGridReact
               theme="legacy"
-              rowData={cafes}
+              rowData={filtered}
               columnDefs={colDefs}
               domLayout="autoHeight"
               rowHeight={56}

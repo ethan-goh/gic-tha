@@ -137,7 +137,7 @@ export default function EmployeesPage() {
       <div className="table-toolbar">
         <div className="toolbar-left">
           <Input
-            placeholder="Filter by name"
+            placeholder="Search by name"
             prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
             value={nameFilter}
             onChange={(e) => handleNameChange(e.target.value)}
